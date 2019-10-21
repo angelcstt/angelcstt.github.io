@@ -1,0 +1,803 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="OSS;picGo,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="习惯了使用md写文档和写博客，所以图床一直是一个非常蛋疼的问题，虽然有很多像sm.ms等免费图床，但是时不时的会出现一些问题，所以索性自己搞一个。  最近很多杂事，终于也算忙的差不多了。 晚上和朋友聊天，聊到了图床，他说可以用oss搭一个，因为我手里有两个ali服务器，所以索性搭建一个。 嗯，下一些大概的流程吧，以供需要的朋友参考。 0x00  阿里云至于阿里与账号的注册什么的，因为之前已经购买">
+<meta name="keywords" content="OSS;picGo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用阿里OSS对象存储搭建blog图床">
+<meta property="og:url" content="http://yoursite.com/2019/10/22/使用阿里OSS对象存储搭建blog图床/index.html">
+<meta property="og:site_name" content="指尖轻点舞千秋">
+<meta property="og:description" content="习惯了使用md写文档和写博客，所以图床一直是一个非常蛋疼的问题，虽然有很多像sm.ms等免费图床，但是时不时的会出现一些问题，所以索性自己搞一个。  最近很多杂事，终于也算忙的差不多了。 晚上和朋友聊天，聊到了图床，他说可以用oss搭一个，因为我手里有两个ali服务器，所以索性搭建一个。 嗯，下一些大概的流程吧，以供需要的朋友参考。 0x00  阿里云至于阿里与账号的注册什么的，因为之前已经购买">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/Ossimg.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/open.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/chuangjian.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/creat.png">
+<meta property="og:image" content="http://static-aliyun-doc.oss-cn-hangzhou.aliyuncs.com/assets/img/8421580751/p43549.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/storage.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/data.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/profile.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/key.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/key2.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/login.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/ossb.png">
+<meta property="og:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/picgo.png">
+<meta property="og:updated_time" content="2019-10-21T18:15:01.134Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用阿里OSS对象存储搭建blog图床">
+<meta name="twitter:description" content="习惯了使用md写文档和写博客，所以图床一直是一个非常蛋疼的问题，虽然有很多像sm.ms等免费图床，但是时不时的会出现一些问题，所以索性自己搞一个。  最近很多杂事，终于也算忙的差不多了。 晚上和朋友聊天，聊到了图床，他说可以用oss搭一个，因为我手里有两个ali服务器，所以索性搭建一个。 嗯，下一些大概的流程吧，以供需要的朋友参考。 0x00  阿里云至于阿里与账号的注册什么的，因为之前已经购买">
+<meta name="twitter:image" content="https://ststatic.oss-cn-hongkong.aliyuncs.com/Ossimg.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/22/使用阿里OSS对象存储搭建blog图床/">
+
+
+
+
+
+  <title>使用阿里OSS对象存储搭建blog图床 | 指尖轻点舞千秋</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">指尖轻点舞千秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/22/使用阿里OSS对象存储搭建blog图床/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="angelcstt">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="指尖轻点舞千秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">使用阿里OSS对象存储搭建blog图床</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-22T00:20:53+08:00">
+                2019-10-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/教程/" itemprop="url" rel="index">
+                    <span itemprop="name">教程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>习惯了使用md写文档和写博客，所以图床一直是一个非常蛋疼的问题，虽然有很多像sm.ms等免费图床，但是时不时的会出现一些问题，所以索性自己搞一个。</p>
+</blockquote>
+<p>最近很多杂事，终于也算忙的差不多了。</p>
+<p>晚上和朋友聊天，聊到了图床，他说可以用oss搭一个，因为我手里有两个ali服务器，所以索性搭建一个。</p>
+<p>嗯，下一些大概的流程吧，以供需要的朋友参考。</p>
+<h4 id="0x00-阿里云"><a href="#0x00-阿里云" class="headerlink" title="0x00  阿里云"></a>0x00  阿里云</h4><p>至于阿里与账号的注册什么的，因为之前已经购买了两个ecs，这里就不再写了，</p>
+<p>略。</p>
+<h4 id="0x01-开通OSS服务"><a href="#0x01-开通OSS服务" class="headerlink" title="0x01 开通OSS服务"></a>0x01 开通OSS服务</h4><p>因为自己购买的服务器是阿里香港的，所以这里就以阿里国际版本为例。</p>
+<p>登录<a href="https://www.alibabacloud.com/" target="_blank" rel="noopener">阿里云</a>,在Products(产品)中找到Object Storage Service(OSS 对象存储服务)</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/Ossimg.png" alt></p>
+<p>然后进入到OSS服务开通页面：</p>
+<p>因为我是阿里云国际版，所以这里只有一个一个选项，那就是按流量计费：</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/open.png" alt></p>
+<p>勾选协议后进行服务开通即可，之后会进行支付，因为是按照流量及使用量计费的，所以这里支付0元。</p>
+<blockquote>
+<p>阿里大陆版本的应该是可以选择包年包月和按流量计费两种方案，根据自己的需要选择即可，因为我个人是用来做图床用的，所以选择了按量计费。<del>其实主要是国际版不给我选项，我也很蛋疼，强行自我选择</del></p>
+</blockquote>
+<h4 id="0x02-OSS-Bucket-配置"><a href="#0x02-OSS-Bucket-配置" class="headerlink" title="0x02 OSS Bucket 配置"></a>0x02 OSS Bucket 配置</h4><p>目前我们只是开通了服务，接下来需要配置OSS，首先需要创建Bucket，可以理解为win下的盘符，每一个bucket都是唯一的，可有给不同的bucket下创建不同的目录结构和赋权，接下来创建Bucket：</p>
+<p>在oss控制台点击左侧的创建bucket按钮：</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/chuangjian.png" alt></p>
+<p>进入到bucket的创建页面：</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/creat.png" alt></p>
+<p>名称根据需要自己填写即可，区域根据你ecs所在区域进行选择，因为内网可以互通，然后类型根据需要进行选择，如果只是日常存点图片文档啥的，建议使用<strong>标准类型</strong>。</p>
+<p>然后读写权限根据需要来进行配置，私有模式是仅管理员（AK）可以访问，公共读是指图片读是开放的，适合用在blog或者一些想对外共享的文件上，因为阿里oss的私有模式下的文件链接是有有效时间限制的，所以如果用作blog图床，必须使用第二种<strong>公共读私有写</strong>。后面的加密或者log根据需要自行选择即可。</p>
+<blockquote>
+<p> <em>这里注意一下，一旦Bucket创建完毕，其地区和存储类型是不能进行修改的，如果发现创建错误了可以删除后重新创建。</em></p>
+</blockquote>
+<p>这样就完成了Bukcet的创建，可根据实际需要创建多个Bucket，这里不表。</p>
+<h4 id="0x03-费用及相关说明"><a href="#0x03-费用及相关说明" class="headerlink" title="0x03 费用及相关说明"></a>0x03 费用及相关说明</h4><blockquote>
+<p>香港地区的OSS存储5GB及一下是免费的，大陆地区的不太清楚，但是也是非常便宜，具体的可以参考官网。唯一怕的就是你的外链被别人拿去疯狂刷，那流量就扛不住，其余的无所谓。</p>
+</blockquote>
+<p><img src="http://static-aliyun-doc.oss-cn-hangzhou.aliyuncs.com/assets/img/8421580751/p43549.png" alt></p>
+<p>基本费用构成：<strong>存储费+接口访问费+外网流出流量费用</strong></p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/storage.png" alt></p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/data.png" alt></p>
+<p>总之基本花不了几毛钱~~放心用，一个月花不了2块钱~  </p>
+<h4 id="0x04-上传工具介绍"><a href="#0x04-上传工具介绍" class="headerlink" title="0x04 上传工具介绍"></a>0x04 上传工具介绍</h4><p>既然OSS已经设置好了，那么接下来就要实现图片的上传了，这里推荐两种上传图片或者文件的方式。</p>
+<p>第一种是使用阿里自己的开源客户端<a href="https://github.com/aliyun/oss-browser" target="_blank" rel="noopener">OSS-Browser</a>，另外一种是使用大牛@Molunerfinn写的开源软件<a href="https://github.com/Molunerfinn/PicGo" target="_blank" rel="noopener">picGo</a></p>
+<p>，两个客户端都提供了Windows、Mac以及Linux版本，根据需要下载即可。</p>
+<blockquote>
+<p>注意picGo Mac版本请直接下载dmg文件后进行安装，zip文件是损坏的。</p>
+</blockquote>
+<h4 id="0x05-AK配置及获取"><a href="#0x05-AK配置及获取" class="headerlink" title="0x05 AK配置及获取"></a>0x05 AK配置及获取</h4><p>既然要实现从桌面应用上传文件到oss，则需要获取阿里云相应的AK，如果您服务器有较多隐私内容，这里强烈建议使用RAM子账号，具体创建子账号的方式<a href="https://www.alibabacloud.com/help/zh/doc-detail/28637.htm?spm=a2c63.p38356.879954.7.7bd42085qFnCVF#concept-gpm-ccf-xdb" target="_blank" rel="noopener">戳这里</a>，参考阿里官方文档，不再BB 。</p>
+<p>因为是我本人的ecs且只有我一个人使用，就挂个blog什么的，所以就懒得创建RAM子账号了，这里说下获取AK 的方式。</p>
+<p>1.登录进入阿里云OSS对象存储控制台，点击右上角个人信息：</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/profile.png" alt></p>
+<p>点击进入AK管理页面获取相应id以及Key</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/key.png" alt></p>
+<p>创建AK成功后,阿里云仅提供一次下载机会,所以一定下载并保存好</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/key2.png" alt></p>
+<p>点击下面那个箭头就可以看到AK信息，这个信息是用来给上面提到的工具配置用的，提前复制保存好。</p>
+<blockquote>
+<p>如果保存的丢了也没关系，可以在已经创建的list中去查看或者重新创建，但是不能再进行下载了。</p>
+</blockquote>
+<p>以上，AK信息获取成功，接下来就是软件相关的配置了。</p>
+<h4 id="0x06-工具插件配置"><a href="#0x06-工具插件配置" class="headerlink" title="0x06 工具插件配置"></a>0x06 工具插件配置</h4><ul>
+<li><p>OSS-Browser</p>
+<p><a href="https://github.com/aliyun/oss-browser/blob/master/all-releases.md" target="_blank" rel="noopener">下载</a>客户端并运行。</p>
+<p>在客户端页面选择AK登录，如果是授权账号也可以使用授权码。</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/login.png" alt></p>
+<p>输入刚才获取的AK进行登录即可</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/ossb.png" alt></p>
+<p>登录后即可进入到客户端进行文件上传及下载操作。</p>
+</li>
+<li><p>picGO</p>
+<p>下载客户端运行，下载链接往上翻。</p>
+<p>下载安装完毕后，进行配置：</p>
+<p><img src="https://ststatic.oss-cn-hongkong.aliyuncs.com/picgo.png" alt></p>
+<p>配置完毕后即可进行图片上传，picGo在图片上传完毕后会自动生成相应的MD链接，方便写作，如果oss仅用作图床的话，个人建议使用picGo更简单快捷一点，虽然是开源软件，但是建议在picGo使用RAM子账号的AK进行登录授权，以免服务器收到安全威胁。</p>
+</li>
+</ul>
+<blockquote>
+<p>目前picGO支持的大多数都是图片上传，如果只是用作图床，建议使用picGo，其拥有很多自定义设置，文件上传建议使用OSS-Browser~</p>
+</blockquote>
+<p>以上。</p>
+<p>深夜xjb写的也没多少逻辑，希望能给你带来一点帮助~ </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/OSS-picGo/" rel="tag"># OSS;picGo</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/21/index/" rel="next" title="期待与优秀的团队共成长">
+                <i class="fa fa-chevron-left"></i> 期待与优秀的团队共成长
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="angelcstt">
+          <p class="site-author-name" itemprop="name">angelcstt</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x00-阿里云"><span class="nav-number">1.</span> <span class="nav-text">0x00  阿里云</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-开通OSS服务"><span class="nav-number">2.</span> <span class="nav-text">0x01 开通OSS服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-OSS-Bucket-配置"><span class="nav-number">3.</span> <span class="nav-text">0x02 OSS Bucket 配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-费用及相关说明"><span class="nav-number">4.</span> <span class="nav-text">0x03 费用及相关说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x04-上传工具介绍"><span class="nav-number">5.</span> <span class="nav-text">0x04 上传工具介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x05-AK配置及获取"><span class="nav-number">6.</span> <span class="nav-text">0x05 AK配置及获取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x06-工具插件配置"><span class="nav-number">7.</span> <span class="nav-text">0x06 工具插件配置</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">angelcstt</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
